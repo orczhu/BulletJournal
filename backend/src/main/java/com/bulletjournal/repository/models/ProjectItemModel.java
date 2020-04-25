@@ -5,6 +5,7 @@ import com.bulletjournal.controller.models.ProjectItem;
 import com.bulletjournal.repository.utils.LongArrayType;
 import com.bulletjournal.repository.utils.StringArrayType;
 import org.hibernate.annotations.*;
+import org.springframework.data.elasticsearch.annotations.Document;
 
 import javax.persistence.*;
 import java.util.Arrays;
@@ -30,6 +31,7 @@ import java.util.Objects;
         ),
 })
 @MappedSuperclass
+@Document(indexName = "project_item_name", type = "name")
 public abstract class ProjectItemModel extends OwnedModel {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

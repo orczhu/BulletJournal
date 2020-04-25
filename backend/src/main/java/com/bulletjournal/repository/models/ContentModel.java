@@ -2,6 +2,7 @@ package com.bulletjournal.repository.models;
 
 import com.bulletjournal.controller.models.Content;
 import com.google.gson.annotations.Expose;
+import org.springframework.data.elasticsearch.annotations.Document;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
@@ -9,6 +10,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 @MappedSuperclass
+@Document(indexName = "content_index", type = "text")
 public abstract class ContentModel<T extends ProjectItemModel> extends AuditModel {
 
     @Expose

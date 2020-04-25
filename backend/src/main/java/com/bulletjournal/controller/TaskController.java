@@ -3,6 +3,7 @@ package com.bulletjournal.controller;
 import com.bulletjournal.clients.UserClient;
 import com.bulletjournal.controller.models.*;
 import com.bulletjournal.controller.utils.EtagGenerator;
+import com.bulletjournal.es.SearchService;
 import com.bulletjournal.notifications.*;
 import com.bulletjournal.repository.TaskDaoJpa;
 import com.bulletjournal.repository.models.CompletedTask;
@@ -50,6 +51,9 @@ public class TaskController {
     @Autowired
     private UserClient userClient;
 
+    @Autowired
+    private SearchService searchService;
+
     @GetMapping(TASKS_ROUTE)
     public ResponseEntity<List<Task>> getTasks(@NotNull @PathVariable Long projectId) {
         String username = MDC.get(UserClient.USER_NAME_KEY);
@@ -93,9 +97,11 @@ public class TaskController {
     @PostMapping(TASKS_ROUTE)
     @ResponseStatus(HttpStatus.CREATED)
     public Task createTask(@NotNull @PathVariable Long projectId,
-                           @Valid @RequestBody CreateTaskParams task) {
+                           @Valid @RequestBody CreateTaskParams params) {
         String username = MDC.get(UserClient.USER_NAME_KEY);
-        return taskDaoJpa.create(projectId, username, task).toPresentationModel();
+        Task task = taskDaoJpa.create(projectId, username, params).toPresentationModel();
+        searchService.saveToES(task);
+        return task;
     }
 
     @PatchMapping(TASK_ROUTE)

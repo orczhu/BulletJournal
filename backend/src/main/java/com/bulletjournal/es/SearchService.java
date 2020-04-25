@@ -38,9 +38,6 @@ public class SearchService {
     @Autowired
     private GroupDaoJpa groupDaoJpa;
 
-//    @Autowired
-//    private ProjectItemEsDaoJpa projectItemEsDaoJpa;
-
     public void saveToES(ProjectItem projectItem) {
         if (highLevelClient == null) {
             return;
@@ -67,18 +64,4 @@ public class SearchService {
             LOGGER.error("SaveToES fail", e);
         }
     }
-
-//    public Long save(ProjectItem projectItem) {
-//        if (highLevelClient == null) {
-//            LOGGER.error("Missing HighLevelClient");
-//            throw new IllegalStateException("Missing Elastic Search HigH Level Client");
-//        }
-//
-//        List<Long> relatedGroupIds = groupDaoJpa.getProjectItemGroups(projectItem.getOwner())
-//                .stream()
-//                .map(Group::getId)
-//                .collect(Collectors.toList());
-//
-//        return projectItemEsDaoJpa.create(projectItem);
-//    }
 }

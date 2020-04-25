@@ -4,6 +4,7 @@ import com.bulletjournal.clients.UserClient;
 import com.bulletjournal.controller.models.*;
 import com.bulletjournal.controller.utils.EtagGenerator;
 import com.bulletjournal.controller.utils.ZonedDateTimeHelper;
+import com.bulletjournal.es.SearchService;
 import com.bulletjournal.exceptions.BadRequestException;
 import com.bulletjournal.ledger.FrequencyType;
 import com.bulletjournal.ledger.LedgerSummary;
@@ -52,6 +53,9 @@ public class TransactionController {
     @Autowired
     private UserClient userClient;
 
+    @Autowired
+    private SearchService searchService;
+
     @GetMapping(TRANSACTIONS_ROUTE)
     public ResponseEntity<LedgerSummary> getTransactions(
             @NotNull @PathVariable Long projectId,
@@ -92,7 +96,9 @@ public class TransactionController {
     public Transaction createTransaction(@NotNull @PathVariable Long projectId,
                                          @Valid @RequestBody CreateTransactionParams createTransactionParams) {
         String username = MDC.get(UserClient.USER_NAME_KEY);
-        return transactionDaoJpa.create(projectId, username, createTransactionParams).toPresentationModel();
+        Transaction transaction = transactionDaoJpa.create(projectId, username, createTransactionParams).toPresentationModel();
+        searchService.saveToES(transaction);
+        return transaction;
     }
 
     @GetMapping(TRANSACTION_ROUTE)
