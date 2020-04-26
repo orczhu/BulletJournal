@@ -50,23 +50,12 @@ abstract class ProjectItemDaoJpa<K extends ContentModel> {
     private ContentRevisionConfig revisionConfig;
     @Autowired
     private ContentDiffTool contentDiffTool;
-    @Autowired
-    private SearchRepository<ContentModel> searchRepository;
 
     abstract <T extends ProjectItemModel> JpaRepository<T, Long> getJpaRepository();
 
     abstract JpaRepository<K, Long> getContentJpaRepository();
 
     abstract List<K> getContents(Long projectItemId, String requester);
-
-    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-    public <T extends ProjectItemModel> List<T> searchProjectItem(QueryBuilder queryBuilder) {
-        List<T> projectItems = new ArrayList<>();
-        for (Object projectItem : searchRepository.search(queryBuilder)) {
-            projectItems.add((T) projectItem);
-        }
-        return projectItems;
-    }
 
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public <T extends ProjectItemModel> SharableLink generatePublicItemLink(
