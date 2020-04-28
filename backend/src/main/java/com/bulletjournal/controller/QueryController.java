@@ -2,7 +2,7 @@ package com.bulletjournal.controller;
 
 import com.bulletjournal.clients.UserClient;
 import com.bulletjournal.es.repository.ProjectItemSearchDaoJpa;
-import com.bulletjournal.es.repository.models.ProjectItem;
+import com.bulletjournal.es.repository.models.ProjectItemNameIndex;
 import com.bulletjournal.repository.UserGroupRepository;
 import com.bulletjournal.repository.UserRepository;
 import org.elasticsearch.action.search.SearchResponse;
@@ -25,9 +25,11 @@ public class QueryController {
     protected static final String SEARCH_ROUTE = "/api/query";
     protected static final String SEARCH_ROUTE_JPA = "/api/query_jpa/";
     private static final Logger LOGGER = LoggerFactory.getLogger(QueryController.class);
-    //    @Qualifier("client")
+
+//    @Qualifier("client")
 //    @Autowired(required = false)
 //    private RestHighLevelClient highLevelClient;
+
     @Autowired
     UserGroupRepository userGroupRepository;
     @Autowired
@@ -71,7 +73,7 @@ public class QueryController {
 
     @GetMapping(SEARCH_ROUTE_JPA)
     @ResponseStatus(HttpStatus.OK)
-    public List<ProjectItem> search(@Valid @RequestParam @NotBlank String term) {
+    public List<ProjectItemNameIndex> search(@Valid @RequestParam @NotBlank String term) {
         String username = MDC.get(UserClient.USER_NAME_KEY);
         return projectItemSearchDaoJpa.search(username, term);
     }

@@ -1,6 +1,7 @@
 package com.bulletjournal.es.repository;
 
-import com.bulletjournal.es.repository.models.ProjectItem;
+import com.bulletjournal.es.repository.models.ProjectItemContentIndex;
+import com.bulletjournal.es.repository.models.ProjectItemNameIndex;
 import com.bulletjournal.repository.UserGroupRepository;
 import com.bulletjournal.repository.UserRepository;
 import com.bulletjournal.repository.models.Group;
@@ -20,7 +21,10 @@ import java.util.stream.Collectors;
 public class ProjectItemSearchDaoJpa {
 
     @Autowired
-    private ProjectItemSearchRepository projectItemSearchRepository;
+    private ProjectItemNameSearchRepository projectItemNameSearchRepository;
+
+    @Autowired
+    private ProjectItemContentSearchRepository projectItemContentSearchRepository;
 
     @Autowired
     private UserGroupRepository userGroupRepository;
@@ -28,8 +32,18 @@ public class ProjectItemSearchDaoJpa {
     @Autowired
     private UserRepository userRepository;
 
-    public List<ProjectItem> search(String username, String term) {
-        List<ProjectItem> results = new ArrayList<>();
+    public void saveProjectItemNameIndex(Long id, String name) {
+        ProjectItemNameIndex projectItemNameIndex = new ProjectItemNameIndex(id, name);
+        projectItemNameSearchRepository.save(projectItemNameIndex);
+    }
+
+    public void saveProjectItemContentIndex(Long id, String content) {
+        ProjectItemContentIndex projectItemContentIndex = new ProjectItemContentIndex(id, content);
+        projectItemContentSearchRepository.save(projectItemContentIndex);
+    }
+
+    public List<ProjectItemNameIndex> search(String username, String term) {
+        List<ProjectItemNameIndex> results = new ArrayList<>();
 
         List<User> users = this.userRepository.findByName(username);
         List<Long> userIdList = users.stream().map(User::getId).collect(Collectors.toList());
@@ -43,8 +57,7 @@ public class ProjectItemSearchDaoJpa {
                         .prefixLength(3)
                         .maxExpansions(10));
 
-        projectItemSearchRepository.search(queryBuilder);
-
+        projectItemNameSearchRepository.search(queryBuilder);
         return results;
     }
 }

@@ -19,7 +19,6 @@ import com.bulletjournal.util.ContentDiffTool;
 import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -205,12 +204,12 @@ abstract class ProjectItemDaoJpa<K extends ContentModel> {
 
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public <T extends ProjectItemModel> Revision getContentRevision(
-        String requester, Long projectItemId, Long contentId, Long revisionId) {
+            String requester, Long projectItemId, Long contentId, Long revisionId) {
         T projectItem = getProjectItem(projectItemId, requester);
         K content = getContent(contentId, requester);
         Preconditions.checkState(
-            Objects.equals(projectItem.getId(), content.getProjectItem().getId()),
-            "ProjectItem ID mismatch");
+                Objects.equals(projectItem.getId(), content.getProjectItem().getId()),
+                "ProjectItem ID mismatch");
         Revision[] revisions = GSON.fromJson(content.getRevisions(), Revision[].class);
         Preconditions.checkNotNull(
                 revisions,

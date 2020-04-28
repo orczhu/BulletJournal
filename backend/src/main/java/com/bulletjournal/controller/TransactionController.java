@@ -97,7 +97,6 @@ public class TransactionController {
                                          @Valid @RequestBody CreateTransactionParams createTransactionParams) {
         String username = MDC.get(UserClient.USER_NAME_KEY);
         Transaction transaction = transactionDaoJpa.create(projectId, username, createTransactionParams).toPresentationModel();
-        searchService.saveToES(transaction);
         return transaction;
     }
 

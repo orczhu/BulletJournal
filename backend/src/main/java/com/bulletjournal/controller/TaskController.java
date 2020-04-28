@@ -100,7 +100,6 @@ public class TaskController {
                            @Valid @RequestBody CreateTaskParams params) {
         String username = MDC.get(UserClient.USER_NAME_KEY);
         Task task = taskDaoJpa.create(projectId, username, params).toPresentationModel();
-        searchService.saveToES(task);
         return task;
     }
 
