@@ -79,6 +79,7 @@ public class NoteController {
                            @Valid @RequestBody CreateNoteParams note) {
         String username = MDC.get(UserClient.USER_NAME_KEY);
         Note createdNote = noteDaoJpa.create(projectId, username, note).toPresentationModel();
+        searchService.saveProjectItemToEs(username, createdNote);
         return createdNote;
     }
 

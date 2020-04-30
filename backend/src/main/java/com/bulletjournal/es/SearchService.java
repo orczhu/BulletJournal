@@ -1,10 +1,9 @@
 package com.bulletjournal.es;
 
-import com.bulletjournal.config.SpringESConfig;
 import com.bulletjournal.controller.models.Content;
+import com.bulletjournal.controller.models.ProjectItem;
 import com.bulletjournal.controller.models.PublicProjectItem;
 import com.bulletjournal.es.repository.ProjectItemSearchDaoJpa;
-import com.bulletjournal.repository.GroupDaoJpa;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,20 +19,21 @@ public class SearchService {
     private static final Logger LOGGER = LoggerFactory.getLogger(SearchService.class);
 
     @Autowired
-    private SpringESConfig springESConfig;
-
-    @Autowired
-    private GroupDaoJpa groupDaoJpa;
-
-    @Autowired
     private ProjectItemSearchDaoJpa projectItemSearchDaoJpa;
 
-    public void saveToES(PublicProjectItem projectItem) {
+    public void savePublicProjectItemToEs(String username, PublicProjectItem projectItem) {
         Long id = projectItem.getProjectItem().getId();
         String name = projectItem.getProjectItem().getName();
-        projectItemSearchDaoJpa.saveProjectItemNameIndex(id, name);
+        projectItemSearchDaoJpa.saveProjectItemNameIndex(username, id, name);
 
         List<Content> contents = projectItem.getContents();
-        contents.forEach(c -> projectItemSearchDaoJpa.saveProjectItemContentIndex(id, c.getText()));
+        contents.forEach(c -> projectItemSearchDaoJpa.saveProjectItemContentIndex(username, id, c.getText()));
+    }
+
+    public void saveProjectItemToEs(String username, ProjectItem projectItem) {
+        Long id = projectItem.getId();
+        String name = projectItem.getName();
+
+        projectItemSearchDaoJpa.saveProjectItemNameIndex(username, id, name);
     }
 }

@@ -5,17 +5,18 @@ import com.bulletjournal.es.repository.ProjectItemSearchDaoJpa;
 import com.bulletjournal.es.repository.models.ProjectItemNameIndex;
 import com.bulletjournal.repository.UserGroupRepository;
 import com.bulletjournal.repository.UserRepository;
-import org.elasticsearch.action.search.SearchResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import java.io.IOException;
 import java.util.List;
 
 
@@ -23,7 +24,6 @@ import java.util.List;
 public class QueryController {
 
     protected static final String SEARCH_ROUTE = "/api/query";
-    protected static final String SEARCH_ROUTE_JPA = "/api/query_jpa/";
     private static final Logger LOGGER = LoggerFactory.getLogger(QueryController.class);
 
 //    @Qualifier("client")
@@ -38,11 +38,18 @@ public class QueryController {
     private ProjectItemSearchDaoJpa projectItemSearchDaoJpa;
 
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping(SEARCH_ROUTE)
     @ResponseStatus(HttpStatus.OK)
-    public SearchResponse searchItems(@Valid @RequestParam @NotBlank String term) throws IOException {
-        return null;
+    public List<ProjectItemNameIndex> search(@Valid @RequestParam @NotBlank String term) {
+        String username = MDC.get(UserClient.USER_NAME_KEY);
+        return projectItemSearchDaoJpa.search(username, term);
+    }
+
+//    @CrossOrigin(origins = "http://localhost:3000")
+//    @GetMapping(SEARCH_ROUTE)
+//    @ResponseStatus(HttpStatus.OK)
+//    public SearchResponse searchItems(@Valid @RequestParam @NotBlank String term) throws IOException {
+//        return null;
 //        if (highLevelClient == null) {
 //            LOGGER.info("ES is not enabled.");
 //            return null;
@@ -69,12 +76,5 @@ public class QueryController {
 //        SearchResponse response = highLevelClient.search(searchRequest, RequestOptions.DEFAULT);
 //        LOGGER.info(response.toString());
 //        return response;
-    }
-
-    @GetMapping(SEARCH_ROUTE_JPA)
-    @ResponseStatus(HttpStatus.OK)
-    public List<ProjectItemNameIndex> search(@Valid @RequestParam @NotBlank String term) {
-        String username = MDC.get(UserClient.USER_NAME_KEY);
-        return projectItemSearchDaoJpa.search(username, term);
-    }
+//    }
 }

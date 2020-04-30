@@ -32,14 +32,31 @@ public class ProjectItemSearchDaoJpa {
     @Autowired
     private UserRepository userRepository;
 
-    public void saveProjectItemNameIndex(Long id, String name) {
-        ProjectItemNameIndex projectItemNameIndex = new ProjectItemNameIndex(id, name);
-        projectItemNameSearchRepository.save(projectItemNameIndex);
+    public void saveProjectItemNameIndex(String username, Long id, String name) {
+
+        List<User> userList = this.userRepository.findByName(username);
+        List<Long> userIdList = userList.stream().map(User::getId).collect(Collectors.toList());
+        List<Long> groupIdList = userGroupRepository.findAllByUserId(userIdList.get(0))
+                .stream().map(UserGroup::getGroup).map(Group::getId).collect(Collectors.toList());
+
+        List<ProjectItemNameIndex> projectItemNameIndices = new ArrayList<>();
+        for (Long group : groupIdList) {
+            projectItemNameIndices.add(new ProjectItemNameIndex(id, group, name));
+        }
+        projectItemNameSearchRepository.saveAll(projectItemNameIndices);
     }
 
-    public void saveProjectItemContentIndex(Long id, String content) {
-        ProjectItemContentIndex projectItemContentIndex = new ProjectItemContentIndex(id, content);
-        projectItemContentSearchRepository.save(projectItemContentIndex);
+    public void saveProjectItemContentIndex(String username, Long id, String content) {
+        List<User> userList = this.userRepository.findByName(username);
+        List<Long> userIdList = userList.stream().map(User::getId).collect(Collectors.toList());
+        List<Long> groupIdList = userGroupRepository.findAllByUserId(userIdList.get(0))
+                .stream().map(UserGroup::getGroup).map(Group::getId).collect(Collectors.toList());
+
+        List<ProjectItemContentIndex> projectItemContentIndices = new ArrayList<>();
+        for (Long group : groupIdList) {
+            projectItemContentIndices.add(new ProjectItemContentIndex(id, group, content));
+        }
+        projectItemContentSearchRepository.saveAll(projectItemContentIndices);
     }
 
     public List<ProjectItemNameIndex> search(String username, String term) {
