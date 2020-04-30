@@ -1,0 +1,13 @@
+#docker run -t -d elasticsearch-custom:latest
+FROM elasticsearch:5.5.1 AS esbuilder
+ADD script.sh path/to/insert/script.sh
+RUN apt-get update \
+    && apt-get install procps -y \
+    && apt-get install httping -y \
+    && /docker-entrypoint.sh elasticsearch -d -E path.data=/tmp/data \
+    && while ! httping -qc1 http://localhost:9200 ; do sleep 1 ; done \
+    && path/to/insert/script.sh \
+    && apt-get clean
+
+FROM elasticsearch:5.5.1
+COPY --from=esbuilder /tmp/data/ /usr/share/elasticsearch/data/

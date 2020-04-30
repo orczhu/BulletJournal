@@ -4,7 +4,6 @@ import com.bulletjournal.config.SpringESConfig;
 import com.bulletjournal.controller.models.Content;
 import com.bulletjournal.controller.models.PublicProjectItem;
 import com.bulletjournal.es.repository.ProjectItemSearchDaoJpa;
-import com.bulletjournal.contents.ContentType;
 import com.bulletjournal.repository.GroupDaoJpa;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
